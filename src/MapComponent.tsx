@@ -1,4 +1,3 @@
-// MapComponent.jsx
 import React, { useEffect, useRef } from 'react';
 import 'ol/ol.css';
 import Map from 'ol/Map';
@@ -11,12 +10,12 @@ import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
 
-const MapComponent = () => {
-  const mapRef = useRef(null);
+const MapComponent: React.FC = () => {
+  const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const map = new Map({
-      target: mapRef.current,
+      target: mapRef.current!,
       layers: [
         new TileLayer({
           source: new XYZ({
@@ -25,12 +24,14 @@ const MapComponent = () => {
         }),
       ],
       view: new View({
-        center: fromLonLat([10.74609, 59.91273]), // Center of Norway
+        center: fromLonLat([10.74609, 59.91273]),
         zoom: 5, // Adjust the zoom level as needed
       }),
     });
 
-    const norwayExtent = [-2000000, 5000000, 4000000, 10000000]; // Extent of Norway in EPSG:3857 projection
+    const norwayExtent: [number, number, number, number] = [
+      -2000000, 5000000, 4000000, 10000000,
+    ];
 
     const civilDefenceLayer = new VectorLayer({
       source: new VectorSource({
@@ -54,10 +55,9 @@ const MapComponent = () => {
         url: 'https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/12/query?where=1%3D1&outFields=*&outSR=4326&f=json',
         format: new GeoJSON(),
       }),
-      style: function (feature) {
-        // Example: Vary the style based on feature properties
-        const status = feature.get('status');
-        let fillColor;
+      style: function (feature: any) {
+        const status: string = feature.get('status');
+        let fillColor: string;
         if (status === 'Open') {
           fillColor = 'green';
         } else if (status === 'Closed') {
@@ -84,7 +84,9 @@ const MapComponent = () => {
     };
   }, []);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '800px' }} />;
+  return (
+    <div ref={mapRef} style={{ width: '100%', height: '800px' }} />
+  ) as JSX.Element;
 };
 
 export default MapComponent;

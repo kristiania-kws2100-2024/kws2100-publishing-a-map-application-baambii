@@ -1,12 +1,12 @@
-// App.jsx
+// App.tsx
 import React from 'react';
 import MapComponent from './MapComponent';
 import './App.css';
 
 const pocachhoImageUrl =
-  'https://www.pngall.com/wp-content/uploads/15/Pochacco-PNG-Photos.webp'; // Replace with your actual URL
+  'https://www.pngall.com/wp-content/uploads/15/Pochacco-PNG-Photos.webp';
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="app-container">
       <header>
@@ -21,6 +21,6 @@ function App() {
       <img src={pocachhoImageUrl} alt="Pocachho" className="pocachho" />
     </div>
   );
-}
+};
 
 export default App;
