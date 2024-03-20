@@ -1,0 +1,59 @@
+/* App.css */
+body {
+  background-image: url('http://m.gettywallpapers.com/wp-content/uploads/2022/02/Cute-Backgrounds-Pictures-HD.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #ff66cc;
+}
+
+.map-container {
+  margin-top: 20px;
+  height: 600px;
+  width: 100%;
+  max-width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #ff66cc;
+  text-align: center;
+  position: absolute;
+  left: 0;
+  bottom: 10px;
+  width: 100%;
+}
+
+.pocachho {
+  position: absolute;
+  bottom: -50px;
+  right: 20px;
+  width: 150px;
+  z-index: 10;
+}
