@@ -10,7 +10,9 @@ import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
 
-const MapComponent: React.FC = () => {
+interface Props {}
+
+const MapComponent: React.FC<Props> = () => {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,7 +57,7 @@ const MapComponent: React.FC = () => {
         url: 'https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/12/query?where=1%3D1&outFields=*&outSR=4326&f=json',
         format: new GeoJSON(),
       }),
-      style: function (feature: any) {
+      style: function (feature) {
         const status: string = feature.get('status');
         let fillColor: string;
         if (status === 'Open') {
@@ -84,9 +86,7 @@ const MapComponent: React.FC = () => {
     };
   }, []);
 
-  return (
-    <div ref={mapRef} style={{ width: '100%', height: '800px' }} />
-  ) as JSX.Element;
+  return <div ref={mapRef} style={{ width: '100%', height: '800px' }} />;
 };
 
 export default MapComponent;
