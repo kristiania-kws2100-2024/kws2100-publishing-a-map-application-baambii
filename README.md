@@ -3,7 +3,7 @@
 # KWS2100 Assignment 1
 
 Link:
-https://github.com/kristiania-kws2100-2024/kws2100-publishing-a-map-application-baambii.git
+https://github.com/kristiania-kws2100-2024/kws2100-publishing-a-map-application-baambii
 
 <TODO: Put a badge to your deployed project here>
 
