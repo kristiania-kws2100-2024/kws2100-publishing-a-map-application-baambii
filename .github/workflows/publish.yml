@@ -21,14 +21,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload Pages Artifact
-        uses: actions/upload-artifact@v2
+      - uses: actions/setup-node@v4
         with:
-          name: github-pages
-          path: . # Upload all files from the repository root directory
+          node-version: 20.x
+          cache: "npm"
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - run: npm ci
+
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./dist
+
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: . # Deploy all files from the repository root directory
+          publish_dir: ./dist
+
