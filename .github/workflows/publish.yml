@@ -1,5 +1,3 @@
-name: Cute Map
-
 on:
   push:
     branches:
@@ -9,32 +7,24 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      id-token: write
-      pages: write
-      contents: read
-
+      id-token: write # to verify the deployment originates from an appropriate
+      pages: write # to deploy to Pages
+      contents: read # to checkout private repositories
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: "npm"
-
       - run: npm ci
-
       - run: npm run build
-
       - uses: actions/upload-pages-artifact@v2
         with:
           path: ./dist
-
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+      - uses: actions/deploy-pages@v3
+        id: deployment
