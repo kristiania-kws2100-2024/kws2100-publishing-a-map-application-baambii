@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Cute Map
 
 on:
   push:
@@ -6,46 +6,28 @@ on:
       - main
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      id-token: write # to verify the deployment originates from an appropriate
+      pages: write # to deploy to Pages
+      contents: read # to checkout private repositories
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '14'
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Project
-        run: npm run build
-
-      - name: Archive Production Build
-        uses: actions/upload-artifact@v2
+          node-version: 20.x
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
         with:
-          name: build-artifact
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: build-artifact
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          path: ./dist
+      - uses: actions/deploy-pages@v4
+        id: deployment
 
