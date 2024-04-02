@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: read
-      pages: read
+      id-token: write
+      pages: write
       contents: read
 
     environment:
