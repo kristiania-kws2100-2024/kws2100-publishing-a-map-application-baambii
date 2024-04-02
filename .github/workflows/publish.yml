@@ -1,4 +1,4 @@
-name: Cute Map Publish
+name: Build and Publish
 
 on:
   push:
@@ -6,14 +6,13 @@ on:
       - main
 
 jobs:
-  publish:
+  build_and_publish:
     runs-on: ubuntu-latest
 
-    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
-      id-token: write # to verify the deployment originates from an appropriate
-      pages: write # to deploy to Pages
-      contents: read # to checkout private repositories
+      id-token: write
+      pages: write
+      contents: read
 
     steps:
       - name: Checkout code
@@ -22,21 +21,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '14'
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build with Vite
+      - name: Format Code with Prettier
+        run: npm run format
+
+      - name: Build Project
         run: npm run build
 
-      - name: Upload Pages Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: pages
-          path: dist
-
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
