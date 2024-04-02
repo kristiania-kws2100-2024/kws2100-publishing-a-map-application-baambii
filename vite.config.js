@@ -5,3 +5,4 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/kws2100-publishing-a-map-application-baambii/' : '/',
   plugins: [react()]
 });
+#hi
