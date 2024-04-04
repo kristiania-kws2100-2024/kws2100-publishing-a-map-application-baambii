@@ -1,7 +1,7 @@
 // App.tsx
 import React from 'react';
 import MapComponent from './MapComponent';
-import 'src/App.css';
+import './App.css';
 
 const pocachhoImageUrl =
   'https://www.pngall.com/wp-content/uploads/15/Pochacco-PNG-Photos.webp';
