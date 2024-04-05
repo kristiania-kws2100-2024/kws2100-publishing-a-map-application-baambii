@@ -17,8 +17,6 @@
       "version": "detect"
     }
   },
-  "rules": {
-    // Add custom rules or override existing ones here
-  },
+  "rules": {},
   "plugins": ["@typescript-eslint", "prettier"]
 }
