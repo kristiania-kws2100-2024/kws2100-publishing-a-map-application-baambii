@@ -38,7 +38,7 @@ const MapComponent: React.FC<Props> = () => {
     fetch('https://kart.dsb.no/share/f1f51e6fb940')
       .then(response => response.json())
       .then(data => {
-        console.log('Tilfluktsrom data:', data); // Log fetched data
+        console.log('Offentlige tilfluktsrom:', data); // Log fetched data
 
         const tilfluktsromLayer = new VectorLayer({
           source: new VectorSource({
