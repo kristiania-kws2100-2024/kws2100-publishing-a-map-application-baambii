@@ -9,11 +9,15 @@ import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
+import { click, pointerMove } from 'ol/events/condition';
+import { Select } from 'ol/interaction';
+import Overlay from 'ol/Overlay';
 
 interface Props {}
 
 const MapComponent: React.FC<Props> = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const map = new Map({
@@ -27,7 +31,7 @@ const MapComponent: React.FC<Props> = () => {
       ],
       view: new View({
         center: fromLonLat([10.74609, 59.91273]),
-        zoom: 5, // Adjust the zoom level as needed
+        zoom: 5,
       }),
     });
 
@@ -81,12 +85,60 @@ const MapComponent: React.FC<Props> = () => {
     map.addLayer(civilDefenceLayer);
     map.addLayer(emergencySheltersLayer);
 
+    // Click functionality
+    const selectClick = new Select({
+      condition: click,
+    });
+
+    selectClick.on('select', (event) => {
+      const selectedFeatures = event.target.getFeatures().getArray();
+      if (selectedFeatures.length > 0) {
+        
+        console.log(selectedFeatures);
+        
+      }
+    });
+
+    map.addInteraction(selectClick);
+
+    // Hover functionality
+    const selectHover = new Select({
+      condition: pointerMove,
+    });
+
+    map.addInteraction(selectHover);
+
+    selectHover.on('select', (event) => {
+      const feature = event.selected[0];
+      if (feature) {
+       
+        console.log('Hovered feature:', feature.getProperties());
+      }
+    });
+
+ 
+    const overlay = new Overlay({
+      element: overlayRef.current!,
+      positioning: 'bottom-center',
+      offset: [0, -15],
+      autoPan: true,
+    });
+
+    map.addOverlay(overlay);
+
     return () => {
       map.dispose();
     };
   }, []);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '800px' }} />;
+  return (
+    <>
+      <div ref={mapRef} style={{ width: '100%', height: '800px' }} />
+      <div ref={overlayRef} id="overlay" style={{ display: 'none', backgroundColor: 'white', padding: '10px', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', position: 'absolute' }}>
+        Additional Information
+      </div>
+    </>
+  );
 };
 
 export default MapComponent;
