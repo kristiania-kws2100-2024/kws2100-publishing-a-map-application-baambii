@@ -9,9 +9,9 @@ import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 import { Circle, Fill, Stroke, Style } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
+import Overlay from 'ol/Overlay';
 import { pointerMove } from 'ol/events/condition';
 import { Select } from 'ol/interaction';
-import Overlay from 'ol/Overlay';
 
 const MapComponent = () => {
   const mapRef = useRef(null);
@@ -23,7 +23,7 @@ const MapComponent = () => {
       layers: [
         new TileLayer({
           source: new XYZ({
-            url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=topo4&zoom={z}&x={x}&y={y}',
+            url: 'https://gatekeeper1.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?version=1.0.0&request=GetTile&layer=topo4&format=image/png&tilematrixset=EPSG:25833&tilematrix={z}&tilerow={y}&tilecol={x}',
           }),
         }),
       ],
@@ -33,25 +33,28 @@ const MapComponent = () => {
       }),
     });
 
-    // Load emergency shelters data
-    const vectorSourceShelters = new VectorSource({
-      format: new GeoJSON(),
-      url: '/Offentligetilfluktsrom2.geojson',
-      wrapX: false,
-    });
+    // Load emergency shelters data from GeoJSON file
+    fetch('/Offentligetilfluktsrom2.geojson')
+      .then(response => response.json())
+      .then(data => {
+        const sheltersLayer = new VectorLayer({
+          source: new VectorSource({
+            features: new GeoJSON().readFeatures(data),
+          }),
+          style: new Style({
+            image: new Circle({
+              radius: 5,
+              fill: new Fill({ color: 'green' }), // Change color for emergency shelters
+              stroke: new Stroke({ color: 'white', width: 2 }),
+            }),
+          }),
+        });
 
-    const sheltersLayer = new VectorLayer({
-      source: vectorSourceShelters,
-      style: new Style({
-        image: new Circle({
-          radius: 5,
-          fill: new Fill({ color: 'green' }), // Change color for emergency shelters
-          stroke: new Stroke({ color: 'white', width: 2 }),
-        }),
-      }),
-    });
-
-    map.addLayer(sheltersLayer);
+        map.addLayer(sheltersLayer);
+      })
+      .catch(error => {
+        console.error('Error loading emergency shelters data:', error);
+      });
 
     // Add interaction for hovering over features
     const selectHover = new Select({
