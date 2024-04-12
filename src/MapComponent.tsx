@@ -35,21 +35,20 @@ const MapComponent: React.FC<Props> = () => {
       }),
     });
 
- 
     fetch('https://kart.dsb.no/share/f1f51e6fb940')
       .then(response => response.json())
       .then(data => {
-        console.log('Emergency shelters data:', data); // Log fetched data
+        console.log('Tilfluktsrom data:', data); // Log fetched data
 
-        const emergencySheltersLayer = new VectorLayer({
+        const tilfluktsromLayer = new VectorLayer({
           source: new VectorSource({
             features: new GeoJSON().readFeatures(data),
           }),
           style: function (feature) {
             console.log('Styling feature:', feature.getProperties()); // Log feature properties
-            const type: string = feature.get('TYPE');
+            const type: string = feature.get('type');
             let fillColor: string;
-            if (type === 'Offentlige tilfluktsrom under sivil forsvaret') {
+            if (type === 'Offentlige tilfluktsrom') {
               fillColor = 'green';
             } else {
               fillColor = 'red';
@@ -64,13 +63,13 @@ const MapComponent: React.FC<Props> = () => {
           },
         });
 
-        map.addLayer(emergencySheltersLayer);
+        map.addLayer(tilfluktsromLayer);
       })
       .catch(error => {
-        console.error('Error loading emergency shelters data:', error);
+        console.error('Error loading tilfluktsrom data:', error);
       });
 
-    // Hover functionality
+
     const selectHover = new Select({
       condition: pointerMove,
     });
@@ -80,12 +79,11 @@ const MapComponent: React.FC<Props> = () => {
     selectHover.on('select', (event) => {
       const feature = event.selected[0];
       if (feature) {
-        
+   
         console.log('Hovered feature:', feature.getProperties());
       }
     });
 
-    
     const overlay = new Overlay({
       element: overlayRef.current!,
       positioning: 'bottom-center',
