@@ -32,7 +32,7 @@ const MapComponent: React.FC<Props> = () => {
     });
 
     // Load civil defence regions data
-    fetch('https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/10/query?where=1%3D1&outFields=*&outSR=4326&f=json')
+    fetch('https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json')
       .then(response => response.json())
       .then(data => {
         const civilDefenceLayer = new VectorLayer({
@@ -55,11 +55,11 @@ const MapComponent: React.FC<Props> = () => {
         console.error('Error loading civil defence regions data:', error);
       });
 
-    // Load emergency shelters data
-    fetch('https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/1/query?where=1%3D1&outFields=*&outSR=4326&f=json')
+    // Load public shelters data
+    fetch('https://kart.dsb.no/share/f1f51e6fb940')
       .then(response => response.json())
       .then(data => {
-        const emergencySheltersLayer = new VectorLayer({
+        const publicSheltersLayer = new VectorLayer({
           source: new VectorSource({
             features: new GeoJSON().readFeatures(data),
           }),
@@ -67,7 +67,7 @@ const MapComponent: React.FC<Props> = () => {
             image: new Circle({
               radius: 5,
               fill: new Fill({
-                color: 'red',
+                color: 'green',
               }),
               stroke: new Stroke({
                 color: 'white',
@@ -76,10 +76,10 @@ const MapComponent: React.FC<Props> = () => {
             }),
           }),
         });
-        map.addLayer(emergencySheltersLayer);
+        map.addLayer(publicSheltersLayer);
       })
       .catch(error => {
-        console.error('Error loading emergency shelters data:', error);
+        console.error('Error loading public shelters data:', error);
       });
 
     return () => {
