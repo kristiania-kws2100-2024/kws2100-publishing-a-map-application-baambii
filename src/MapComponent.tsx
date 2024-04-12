@@ -56,7 +56,7 @@ const MapComponent: React.FC<Props> = () => {
       });
 
     // Load public shelters data
-    fetch('https://kart.dsb.no/share/f1f51e6fb940#')
+    fetch('https://raw.githubusercontent.com/kristiania-kws2100-2024/kws2100-publishing-a-map-application-baambii/main/src/Offentligetilfluktsrom2.geojson')
       .then(response => response.json())
       .then(data => {
         const publicSheltersLayer = new VectorLayer({
