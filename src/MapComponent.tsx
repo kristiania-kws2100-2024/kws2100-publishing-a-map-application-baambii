@@ -56,7 +56,7 @@ const MapComponent: React.FC<Props> = () => {
       });
 
     // Load public shelters data
-    fetch('https://kart.dsb.no/share/f1f51e6fb940')
+    fetch('https://kart.dsb.no/share/f1f51e6fb940#')
       .then(response => response.json())
       .then(data => {
         const publicSheltersLayer = new VectorLayer({
