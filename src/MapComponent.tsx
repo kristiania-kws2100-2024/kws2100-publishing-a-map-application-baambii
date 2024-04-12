@@ -9,7 +9,7 @@ import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
-import { click, pointerMove } from 'ol/events/condition';
+import { pointerMove } from 'ol/events/condition';
 import { Select } from 'ol/interaction';
 import Overlay from 'ol/Overlay';
 
@@ -35,73 +35,38 @@ const MapComponent: React.FC<Props> = () => {
       }),
     });
 
-    const norwayExtent: [number, number, number, number] = [
-      -2000000, 5000000, 4000000, 10000000,
-    ];
-
-    const civilDefenceLayer = new VectorLayer({
-      source: new VectorSource({
-        url: 'https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/10/query?where=1%3D1&outFields=*&outSR=4326&f=json',
-        format: new GeoJSON(),
-      }),
-      style: new Style({
-        fill: new Fill({
-          color: 'rgba(255, 0, 0, 0.2)',
-        }),
-        stroke: new Stroke({
-          color: 'red',
-          width: 2,
-        }),
-      }),
-      extent: norwayExtent,
-    });
-
-    const emergencySheltersLayer = new VectorLayer({
-      source: new VectorSource({
-        url: 'https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/12/query?where=1%3D1&outFields=*&outSR=4326&f=json',
-        format: new GeoJSON(),
-      }),
-      style: function (feature) {
-        const status: string = feature.get('status');
-        let fillColor: string;
-        if (status === 'Open') {
-          fillColor = 'green';
-        } else if (status === 'Closed') {
-          fillColor = 'red';
-        } else {
-          fillColor = 'grey';
-        }
-        return new Style({
-          image: new Circle({
-            radius: 7,
-            fill: new Fill({ color: fillColor }),
-            stroke: new Stroke({ color: 'white', width: 2 }),
+    // Load emergency shelters data
+    fetch('https://kart.dsb.no/share/f1f51e6fb940')
+      .then(response => response.json())
+      .then(data => {
+        const emergencySheltersLayer = new VectorLayer({
+          source: new VectorSource({
+            features: new GeoJSON().readFeatures(data),
           }),
+          style: function (feature) {
+            const status: string = feature.get('status');
+            let fillColor: string;
+            if (status === 'Open') {
+              fillColor = 'green';
+            } else if (status === 'Closed') {
+              fillColor = 'red';
+            } else {
+              fillColor = 'grey';
+            }
+            return new Style({
+              image: new Circle({
+                radius: 7,
+                fill: new Fill({ color: fillColor }),
+                stroke: new Stroke({ color: 'white', width: 2 }),
+              }),
+            });
+          },
         });
-      },
-      extent: norwayExtent,
-    });
 
-    map.addLayer(civilDefenceLayer);
-    map.addLayer(emergencySheltersLayer);
+        map.addLayer(emergencySheltersLayer);
+      });
 
-    // Click functionality
-    const selectClick = new Select({
-      condition: click,
-    });
-
-    selectClick.on('select', (event) => {
-      const selectedFeatures = event.target.getFeatures().getArray();
-      if (selectedFeatures.length > 0) {
-        
-        console.log(selectedFeatures);
-        
-      }
-    });
-
-    map.addInteraction(selectClick);
-
-    // Hover functionality
+    
     const selectHover = new Select({
       condition: pointerMove,
     });
@@ -111,12 +76,12 @@ const MapComponent: React.FC<Props> = () => {
     selectHover.on('select', (event) => {
       const feature = event.selected[0];
       if (feature) {
-       
+      
         console.log('Hovered feature:', feature.getProperties());
       }
     });
 
- 
+    
     const overlay = new Overlay({
       element: overlayRef.current!,
       positioning: 'bottom-center',
