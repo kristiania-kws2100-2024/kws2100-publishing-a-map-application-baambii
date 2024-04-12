@@ -9,19 +9,15 @@ import XYZ from 'ol/source/XYZ';
 import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
-import { pointerMove } from 'ol/events/condition';
-import { Select } from 'ol/interaction';
 import Overlay from 'ol/Overlay';
 
-interface Props {}
-
-const MapComponent: React.FC<Props> = () => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const overlayRef = useRef<HTMLDivElement>(null);
+const MapComponent = () => {
+  const mapRef = useRef(null);
+  const overlayRef = useRef(null);
 
   useEffect(() => {
     const map = new Map({
-      target: mapRef.current!,
+      target: mapRef.current,
       layers: [
         new TileLayer({
           source: new XYZ({
@@ -35,29 +31,19 @@ const MapComponent: React.FC<Props> = () => {
       }),
     });
 
-    fetch('https://kart.dsb.no/')
+    fetch('https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/12/query?where=1%3D1&outFields=*&outSR=4326&f=json')
       .then(response => response.json())
       .then(data => {
-        console.log('GeoJSON data:', data); // Log fetched data
-
         const tilfluktsromLayer = new VectorLayer({
           source: new VectorSource({
             features: new GeoJSON().readFeatures(data),
           }),
           style: function (feature) {
-            console.log('Styling feature:', feature.getProperties()); // Log feature properties
-            const type: string = feature.get('type');
-            let fillColor: string;
-            if (type === 'Offentlige tilfluktsrom') {
-              fillColor = 'green';
-            } else {
-              fillColor = 'red';
-            }
             return new Style({
               image: new Circle({
-                radius: 7,
-                fill: new Fill({ color: fillColor }),
-                stroke: new Stroke({ color: 'white', width: 2 }),
+                radius: 3,
+                fill: new Fill({ color: 'green' }),
+                stroke: new Stroke({ color: 'white', width: 1 }),
               }),
             });
           },
@@ -69,23 +55,8 @@ const MapComponent: React.FC<Props> = () => {
         console.error('Error loading tilfluktsrom data:', error);
       });
 
-
-    const selectHover = new Select({
-      condition: pointerMove,
-    });
-
-    map.addInteraction(selectHover);
-
-    selectHover.on('select', (event) => {
-      const feature = event.selected[0];
-      if (feature) {
-   
-        console.log('Hovered feature:', feature.getProperties());
-      }
-    });
-
     const overlay = new Overlay({
-      element: overlayRef.current!,
+      element: overlayRef.current,
       positioning: 'bottom-center',
       offset: [0, -15],
       autoPan: true,
