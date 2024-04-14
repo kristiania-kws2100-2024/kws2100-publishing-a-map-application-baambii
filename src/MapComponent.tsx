@@ -55,7 +55,7 @@ const MapComponent: React.FC<Props> = () => {
     const emergencySheltersLayer = new VectorLayer({
       source: new VectorSource({
         format: new GeoJSON(),
-        url: "/kws2100-publishing-a-map-application-baambii/public/Offentligetilfluktsrom2.geojson",
+        url: "/kws2100-publishing-a-map-application-baambii/Offentligetilfluktsrom2.geojson",
         wrapX: false,
       }),
       style: function (feature) {
