@@ -6,7 +6,6 @@ import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
-import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -15,7 +14,6 @@ interface Props {}
 
 const MapComponent: React.FC<Props> = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const map = new Map({
@@ -29,7 +27,7 @@ const MapComponent: React.FC<Props> = () => {
       ],
       view: new View({
         center: fromLonLat([10.74609, 59.91273]),
-        zoom: 5,
+        zoom: 5, // Juster zoomnivået etter behov
       }),
     });
 
@@ -44,30 +42,18 @@ const MapComponent: React.FC<Props> = () => {
         wrapX: false,
       }),
       style: function (feature) {
-        const plasser: number = feature.get('plasser');
-        const status: string = plasser > 0 ? 'Open' : 'Closed';
-
-        // Vary the style based on feature properties
+        const places: number = feature.get('plasser');
         let fillColor: string;
-        let radius: number;
-        switch (status) {
-          case 'Open':
-            fillColor = 'green';
-            radius = 10;
-            break;
-          case 'Closed':
-            fillColor = 'red';
-            radius = 8;
-            break;
-          default:
-            fillColor = 'grey';
-            radius = 6;
-            break;
+        if (places > 500) {
+          fillColor = 'green';
+        } else if (places > 200) {
+          fillColor = 'yellow';
+        } else {
+          fillColor = 'red';
         }
-
         return new Style({
           image: new Circle({
-            radius: radius,
+            radius: places / 100, // Adjust size based on number of places
             fill: new Fill({ color: fillColor }),
             stroke: new Stroke({ color: 'white', width: 2 }),
           }),
@@ -78,36 +64,9 @@ const MapComponent: React.FC<Props> = () => {
 
     map.addLayer(emergencySheltersLayer);
 
-    const overlay = new Overlay({
-      element: popupRef.current!,
-      autoPan: true,
-      autoPanAnimation: {
-        duration: 250,
-      },
-    });
-
-    map.addOverlay(overlay);
-
     map.on('click', function (event) {
-      const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
-        return feature;
-      });
-
-      if (feature && feature.get('romnr') && feature.get('plasser') && feature.get('adresse')) {
-        const name: string = feature.get('romnr').toString();
-        const status: string = feature.get('plasser') > 0 ? 'Open' : 'Closed';
-        const description: string = feature.get('adresse');
-
-        const content = `<div><strong>Shelter Name:</strong> ${name}</div>` +
-          `<div><strong>Status:</strong> ${status}</div>` +
-          `<div><strong>Description:</strong> ${description}</div>`;
-
-        overlay.setPosition(event.coordinate);
-        popupRef.current!.innerHTML = content;
-        popupRef.current!.style.display = 'block';
-      } else {
-        popupRef.current!.style.display = 'none';
-      }
+      const coordinate = event.coordinate;
+      console.log('Clicked coordinate:', coordinate);
     });
 
     return () => {
@@ -115,12 +74,7 @@ const MapComponent: React.FC<Props> = () => {
     };
   }, []);
 
-  return (
-    <div>
-      <div ref={mapRef} style={{ width: '100%', height: '800px' }} />
-      <div ref={popupRef} className="popup"></div>
-    </div>
-  );
+  return <div ref={mapRef} style={{ width: '100%', height: '800px' }} />;
 };
 
 export default MapComponent;
