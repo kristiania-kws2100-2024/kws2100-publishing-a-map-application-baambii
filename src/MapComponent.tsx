@@ -54,7 +54,7 @@ const MapComponent: React.FC<Props> = () => {
 
     const emergencySheltersLayer = new VectorLayer({
       source: new VectorSource({
-        url: 'https://kart.dsb.no/arcgis/rest/services/atom/Sikkerhet_og_beredskap/MapServer/12/query?where=1%3D1&outFields=*&outSR=4326&f=json',
+        url: 'https://kart.dsb.no/share/f1f51e6fb940#',
         format: new GeoJSON(),
       }),
       style: function (feature) {
