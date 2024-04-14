@@ -6,6 +6,7 @@ import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import XYZ from 'ol/source/XYZ';
+import Overlay from 'ol/Overlay';
 import { fromLonLat } from 'ol/proj';
 import { Style, Fill, Stroke, Circle } from 'ol/style';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -14,6 +15,7 @@ interface Props {}
 
 const MapComponent: React.FC<Props> = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const map = new Map({
@@ -27,7 +29,7 @@ const MapComponent: React.FC<Props> = () => {
       ],
       view: new View({
         center: fromLonLat([10.74609, 59.91273]),
-        zoom: 5, // Juster zoomnivået etter behov
+        zoom: 5,
       }),
     });
 
@@ -42,18 +44,23 @@ const MapComponent: React.FC<Props> = () => {
         wrapX: false,
       }),
       style: function (feature) {
-        const places: number = feature.get('plasser');
+        const plasser: number = feature.get('plasser');
         let fillColor: string;
-        if (places > 500) {
+        let radius: number;
+        if (plasser > 500) {
           fillColor = 'green';
-        } else if (places > 200) {
+          radius = 10;
+        } else if (plasser > 200) {
           fillColor = 'yellow';
+          radius = 8;
         } else {
           fillColor = 'red';
+          radius = 6;
         }
+
         return new Style({
           image: new Circle({
-            radius: places / 100, /
+            radius: radius,
             fill: new Fill({ color: fillColor }),
             stroke: new Stroke({ color: 'white', width: 2 }),
           }),
@@ -64,9 +71,36 @@ const MapComponent: React.FC<Props> = () => {
 
     map.addLayer(emergencySheltersLayer);
 
+    const overlay = new Overlay({
+      element: popupRef.current!,
+      autoPan: true,
+      autoPanAnimation: {
+        duration: 250,
+      },
+    });
+
+    map.addOverlay(overlay);
+
     map.on('click', function (event) {
-      const coordinate = event.coordinate;
-      console.log('Clicked coordinate:', coordinate);
+      const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+        return feature;
+      });
+
+      if (feature && feature.get('romnr') && feature.get('plasser') && feature.get('adresse')) {
+        const name: string = feature.get('romnr').toString();
+        const plasser: number = feature.get('plasser');
+        const description: string = feature.get('adresse');
+
+        const content = `<div><strong>Shelter Name:</strong> ${name}</div>` +
+          `<div><strong>Description:</strong> ${description}</div>` +
+          `<div><strong>Number of Places:</strong> ${plasser}</div>`;
+
+        overlay.setPosition(event.coordinate);
+        popupRef.current!.innerHTML = content;
+        popupRef.current!.style.display = 'block';
+      } else {
+        popupRef.current!.style.display = 'none';
+      }
     });
 
     return () => {
@@ -74,7 +108,12 @@ const MapComponent: React.FC<Props> = () => {
     };
   }, []);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '800px' }} />;
+  return (
+    <div>
+      <div ref={mapRef} style={{ width: '100%', height: '800px' }} />
+      <div ref={popupRef} className="popup"></div>
+    </div>
+  );
 };
 
 export default MapComponent;
