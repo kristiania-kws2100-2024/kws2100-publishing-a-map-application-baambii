@@ -54,7 +54,7 @@ const MapComponent: React.FC<Props> = () => {
 
     const emergencySheltersLayer = new VectorLayer({
       source: new VectorSource({
-        url: 'https://kristiania-kws2100-2024.github.io/kws2100-publishing-a-map-application-baambii/public/Offentligetilfluktsrom2.geojson', // Endre URL-en til å peke på JSON-filen på GitHub Pages
+        url: 'https://kristiania-kws2100-2024.github.io/kws2100-publishing-a-map-application-baambii/public/Offentligetilfluktsrom2.geojson', 
         format: new GeoJSON(),
       }),
       style: function (feature) {
