@@ -92,8 +92,8 @@ const MapComponent: React.FC<Props> = () => {
         const description: string = feature.get('adresse');
 
         const content = `<div><strong>Shelter Name:</strong> ${name}</div>` +
-          `<div><strong>Description:</strong> ${description}</div>` +
-          `<div><strong>Number of Places:</strong> ${plasser}</div>`;
+          `<div><strong>Description/Location:</strong> ${description}</div>` +
+          `<div><strong>Number of people allowed::</strong> ${plasser}</div>`;
 
         overlay.setPosition(event.coordinate);
         popupRef.current!.innerHTML = content;
