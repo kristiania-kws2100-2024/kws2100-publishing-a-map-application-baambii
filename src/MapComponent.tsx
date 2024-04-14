@@ -29,7 +29,7 @@ const MapComponent: React.FC<Props> = () => {
       ],
       view: new View({
         center: fromLonLat([10.74609, 59.91273]),
-        zoom: 5, // Juster zoomnivået etter behov
+        zoom: 5,
       }),
     });
 
@@ -47,10 +47,28 @@ const MapComponent: React.FC<Props> = () => {
         const plasser: number = feature.get('plasser');
         const status: string = plasser > 0 ? 'Open' : 'Closed';
 
+        // Vary the style based on feature properties
+        let fillColor: string;
+        let radius: number;
+        switch (status) {
+          case 'Open':
+            fillColor = 'green';
+            radius = 10;
+            break;
+          case 'Closed':
+            fillColor = 'red';
+            radius = 8;
+            break;
+          default:
+            fillColor = 'grey';
+            radius = 6;
+            break;
+        }
+
         return new Style({
           image: new Circle({
-            radius: 10,
-            fill: new Fill({ color: getStatusColor(status) }),
+            radius: radius,
+            fill: new Fill({ color: fillColor }),
             stroke: new Stroke({ color: 'white', width: 2 }),
           }),
         });
@@ -76,7 +94,7 @@ const MapComponent: React.FC<Props> = () => {
       });
 
       if (feature && feature.get('romnr') && feature.get('plasser') && feature.get('adresse')) {
-        const name: string = feature.get('romnr').toString(); // Convert to string if needed
+        const name: string = feature.get('romnr').toString();
         const status: string = feature.get('plasser') > 0 ? 'Open' : 'Closed';
         const description: string = feature.get('adresse');
 
@@ -91,17 +109,6 @@ const MapComponent: React.FC<Props> = () => {
         popupRef.current!.style.display = 'none';
       }
     });
-
-    function getStatusColor(status: string): string {
-      switch (status) {
-        case 'Open':
-          return 'green';
-        case 'Closed':
-          return 'red';
-        default:
-          return 'grey';
-      }
-    }
 
     return () => {
       map.dispose();
