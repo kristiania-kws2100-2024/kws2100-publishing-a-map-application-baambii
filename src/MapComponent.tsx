@@ -54,8 +54,9 @@ const MapComponent: React.FC<Props> = () => {
 
     const emergencySheltersLayer = new VectorLayer({
       source: new VectorSource({
-        url: 'https://raw.githubusercontent.com/kristiania-kws2100-2024/kws2100-publishing-a-map-application-baambii/18eceff7a8a1aab3fb2ef850e27dbbccfe24986b/public/Offentligetilfluktsrom2.geojson', // Endre URL-en til å peke på GitHub-raw-URLen
         format: new GeoJSON(),
+        url: "/kws2100-publishing-a-map-application-baambii/public/Offentligetilfluktsrom2.geojson",
+        wrapX: false,
       }),
       style: function (feature) {
         const status: string = feature.get('status');
@@ -95,3 +96,4 @@ const MapComponent: React.FC<Props> = () => {
 };
 
 export default MapComponent;
+
