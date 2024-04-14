@@ -91,7 +91,7 @@ const MapComponent: React.FC<Props> = () => {
         const plasser: number = feature.get('plasser');
         const description: string = feature.get('adresse');
 
-        const content = `<div><strong>Shelter Name:</strong> ${name}</div>` +
+        const content = `<div><strong>Shelter Number:</strong> ${name}</div>` +
           `<div><strong>Description/Location:</strong> ${description}</div>` +
           `<div><strong>Number of people allowed::</strong> ${plasser}</div>`;
 
