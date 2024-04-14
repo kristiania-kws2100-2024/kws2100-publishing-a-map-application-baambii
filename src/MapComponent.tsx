@@ -53,7 +53,7 @@ const MapComponent: React.FC<Props> = () => {
         }
         return new Style({
           image: new Circle({
-            radius: places / 100, // Adjust size based on number of places
+            radius: places / 100, /
             fill: new Fill({ color: fillColor }),
             stroke: new Stroke({ color: 'white', width: 2 }),
           }),
