@@ -70,8 +70,8 @@ const MapComponent: React.FC<Props> = () => {
         }
         return new Style({
           image: new Circle({
-            radius: 7,
-            fill: new Fill({ color: fillColor }),
+            radius: 10,
+            fill: new Fill({ color: getStatusColor(status) }),
             stroke: new Stroke({ color: 'white', width: 2 }),
           }),
         });
@@ -83,9 +83,46 @@ const MapComponent: React.FC<Props> = () => {
     map.addLayer(emergencySheltersLayer);
 
     map.on('click', function (event) {
-      const coordinate = event.coordinate;
-      console.log('Clicked coordinate:', coordinate);
+      const feature = map.forEachFeatureAtPixel(event.pixel, function (feature) {
+        return feature;
+      });
+
+      if (feature) {
+        const status: string = feature.get('status');
+        const name: string = feature.get('name');
+        const description: string = feature.get('description');
+
+       
+        displayShelterInfo(name, status, description);
+
+       
+        feature.setStyle(new Style({
+          image: new Circle({
+            radius: 10,
+            fill: new Fill({ color: getStatusColor(status) }),
+            stroke: new Stroke({ color: 'white', width: 2 }),
+          }),
+        }));
+      }
     });
+
+    function displayShelterInfo(name: string, status: string, description: string) {
+   
+      console.log('Shelter Name:', name);
+      console.log('Status:', status);
+      console.log('Description:', description);
+    }
+
+    function getStatusColor(status: string): string {
+      switch (status) {
+        case 'Open':
+          return 'green';
+        case 'Closed':
+          return 'red';
+        default:
+          return 'grey';
+      }
+    }
 
     return () => {
       map.dispose();
@@ -96,4 +133,3 @@ const MapComponent: React.FC<Props> = () => {
 };
 
 export default MapComponent;
-
