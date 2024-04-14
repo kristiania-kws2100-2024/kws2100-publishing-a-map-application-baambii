@@ -27,7 +27,7 @@ const MapComponent: React.FC<Props> = () => {
       ],
       view: new View({
         center: fromLonLat([10.74609, 59.91273]),
-        zoom: 5, // Adjust the zoom level as needed
+        zoom: 5, // Juster zoomnivået etter behov
       }),
     });
 
@@ -54,7 +54,7 @@ const MapComponent: React.FC<Props> = () => {
 
     const emergencySheltersLayer = new VectorLayer({
       source: new VectorSource({
-        url: 'https://kart.dsb.no/share/f1f51e6fb940',
+        url: 'https://github.com/kristiania-kws2100-2024/kws2100-publishing-a-map-application-baambii/blob/18eceff7a8a1aab3fb2ef850e27dbbccfe24986b/public/Offentligetilfluktsrom2.geojson',
         format: new GeoJSON(),
       }),
       style: function (feature) {
@@ -87,28 +87,6 @@ const MapComponent: React.FC<Props> = () => {
       console.log('Clicked coordinate:', coordinate);
     
     });
-
-    function downloadJsonFromUrl(url) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'blob';
-      xhr.onload = function() {
-        if (xhr.status === 200) {
-          var link = document.createElement('a');
-          link.style.display = 'none';
-          var blob = new Blob([xhr.response], { type: 'application/json' });
-          var url = window.URL.createObjectURL(blob);
-          link.href = url;
-          link.setAttribute('download', 'data.json');
-          link.setAttribute('target', '_blank');
-          link.click();
-          window.URL.revokeObjectURL(url);
-        }
-      };
-      xhr.send();
-    }
-
-    downloadJsonFromUrl('https://kart.dsb.no/share/f1f51e6fb940');
 
     return () => {
       map.dispose();
