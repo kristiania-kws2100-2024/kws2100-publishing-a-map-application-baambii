@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -59,15 +59,11 @@ const MapComponent: React.FC<Props> = () => {
         wrapX: false,
       }),
       style: function (feature) {
-        const status: string = feature.get('status');
-        let fillColor: string;
-        if (status === 'Open') {
-          fillColor = 'green';
-        } else if (status === 'Closed') {
-          fillColor = 'red';
-        } else {
-          fillColor = 'grey';
-        }
+        const plasser: number = feature.get('plasser');
+        const status: string = plasser > 0 ? 'Open' : 'Closed';
+        const name: string = feature.get('romnr').toString(); // Convert to string if needed
+        const description: string = feature.get('adresse');
+
         return new Style({
           image: new Circle({
             radius: 10,
@@ -87,15 +83,15 @@ const MapComponent: React.FC<Props> = () => {
         return feature;
       });
 
-      if (feature) {
-        const status: string = feature.get('status');
-        const name: string = feature.get('name');
-        const description: string = feature.get('description');
+      if (feature && feature.get('romnr') && feature.get('plasser') && feature.get('adresse')) {
+        const name: string = feature.get('romnr').toString(); // Convert to string if needed
+        const status: string = feature.get('plasser') > 0 ? 'Open' : 'Closed';
+        const description: string = feature.get('adresse');
 
-       
+        // Display more information about the shelter
         displayShelterInfo(name, status, description);
 
-       
+        // Change the style of the clicked shelter to make it cute
         feature.setStyle(new Style({
           image: new Circle({
             radius: 10,
@@ -107,7 +103,7 @@ const MapComponent: React.FC<Props> = () => {
     });
 
     function displayShelterInfo(name: string, status: string, description: string) {
-   
+      // Implement logic to display shelter info in an aside or overlay
       console.log('Shelter Name:', name);
       console.log('Status:', status);
       console.log('Description:', description);
